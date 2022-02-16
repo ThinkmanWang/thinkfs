@@ -2,8 +2,8 @@
 #include <linux/proc_fs.h>
 #include <linux/seq_file.h>
 
-//#define THINKFS_ROOT "thinkfs"
-//static struct proc_dir_entry *thinkfs_root = NULL;
+#define THINKFS_ROOT "thinkfs"
+static struct proc_dir_entry *thinkfs_root = NULL;
 
 static int hello_proc_show(struct seq_file *m, void *v) {
     seq_printf(m, "Hello World!\n");
@@ -22,17 +22,19 @@ static const struct proc_ops hello_proc_fops = {
 };
 
 static int __init hello_proc_init(void) {
-    //thinkfs_root = proc_mkdir(THINKFS_ROOT, NULL);
-    //if (NULL == thinkfs_root) {
-    //    printk("cannot mkdir thinkfs");
-    //    return -ENOMEM;
-    //}
-    proc_create("hellofs", 0, NULL, &hello_proc_fops);
+    thinkfs_root = proc_mkdir(THINKFS_ROOT, NULL);
+    if (NULL == thinkfs_root) {
+        printk("cannot mkdir thinkfs");
+        return -ENOMEM;
+    }
+
+    proc_create("thinkfs", 0, thinkfs_root, &hello_proc_fops);
     return 0;
 }
 
 static void __exit hello_proc_exit(void) {
-    remove_proc_entry("hellofs", NULL);
+    remove_proc_entry("thinkfs", thinkfs_root);
+    remove_proc_entry(THINKFS_ROOT, NULL);
 }
 
 MODULE_LICENSE("GPL");
